@@ -1,0 +1,17 @@
+# Do not edit requirements.txt directly. It is generated from `requirements.in` by `pip-compile`.
+# requirement.in Intentionally dependent, excludes their dependencies
+# Use `pip-compile` to generate `requirements.txt` with all dependencies.
+
+fastapi
+sqlalchemy
+libpass
+alembic
+psycopg2-binary
+uvicorn
+dotenv
+asyncpg
+
+# testing
+pytest
+pytest-asyncio
+httpx
