@@ -35,14 +35,14 @@ async def test_database_connection(async_session):
 
 @pytest.mark.asyncio
 async def test_create_user(async_session):
-    user = User(username="testuser", password="pw")
+    user = User(username="testuser", password="pw123456")
     async_session.add(user)
     await async_session.commit()
     assert user.id is not None
 
 @pytest.mark.asyncio
 async def test_create_todo(async_session):
-    user = User(username="testuser2", password="pw")
+    user = User(username="testuser2", password="pw123456")
     async_session.add(user)
     await async_session.commit()
     todo = Todo(title="Test Todo", owner_id=user.id)
@@ -54,7 +54,7 @@ async def test_create_todo(async_session):
 
 @pytest.mark.asyncio
 async def test_update_todo(async_session):
-    user = User(username="testuser3", password="pw")
+    user = User(username="testuser3", password="pw123456")
     async_session.add(user)
     await async_session.commit()
     todo = Todo(title="Test Todo 2", owner_id=user.id)
@@ -66,7 +66,7 @@ async def test_update_todo(async_session):
 
 @pytest.mark.asyncio
 async def test_delete_todo(async_session):
-    user = User(username="testuser4", password="pw")
+    user = User(username="testuser4", password="pw123456")
     async_session.add(user)
     await async_session.commit()
     todo = Todo(title="Test Todo 3", owner_id=user.id)
@@ -79,7 +79,7 @@ async def test_delete_todo(async_session):
 
 @pytest.mark.asyncio
 async def test_user_todo_list_relationship(async_session):
-    user = User(username="testuser5", password="pw")
+    user = User(username="testuser5", password="pw123456")
     async_session.add(user)
     await async_session.commit()
     todo1 = Todo(title="Test Todo 4", owner_id=user.id)
@@ -89,3 +89,15 @@ async def test_user_todo_list_relationship(async_session):
     todos = await async_session.execute(text("SELECT title FROM todos WHERE owner_id=:owner_id ORDER BY id"), {"owner_id": user.id})
     titles = [row[0] for row in todos.fetchall()]
     assert titles == ["Test Todo 4", "Test Todo 5"]
+
+@pytest.mark.asyncio
+async def test_user_unique_username(async_session):
+    user1 = User(username="uniqueuser", password="pw123456")
+    user2 = User(username="uniqueuser", password="pw123456")
+    async_session.add(user1)
+    await async_session.commit()
+    async_session.add(user2)
+    with pytest.raises(Exception):
+        await async_session.commit()
+        assert False, "Expected an exception due to unique constraint violation"
+    assert True  # If we reach here, the exception was raised as expected
