@@ -1,8 +1,9 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, HTTPException
 from contextlib import asynccontextmanager
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from database import SessionLocal, engine, Base
+
+from database import engine, Base
+from dependencies import DBSession
 from schemas import TodoCreate, UserCreate, Token
 from models import Todo, User
 from auth import hash_pw, verify_pw
@@ -18,10 +19,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-async def get_db():
-    async with SessionLocal() as session:
-        yield session
-
 @app.get("/dummy_ok")
 async def dummy():
     return {"status": "ok"}
@@ -29,7 +26,7 @@ async def dummy():
 @app.post("/register")
 async def register(
     user: UserCreate,
-    db: AsyncSession = Depends(get_db)
+    db: DBSession
 ):
     new_user = User(
         username=user.username,
@@ -44,7 +41,7 @@ async def register(
 @app.post("/login")
 async def login(
     user: UserCreate,
-    db: AsyncSession = Depends(get_db)
+    db: DBSession
 ):
     result = await db.execute(
         select(User).where(User.username == user.username)
@@ -60,7 +57,7 @@ async def login(
 @app.post("/todos")
 async def create_todo(
     todo: TodoCreate,
-    db: AsyncSession = Depends(get_db)
+    db: DBSession
 ):
     #TODO associate the todo with the authenticated user
     new_todo = Todo(title=todo.title)
@@ -71,7 +68,7 @@ async def create_todo(
 
 @app.get("/todos")
 async def list_todos(
-    db: AsyncSession = Depends(get_db)
+    db: DBSession
 ):
     #TODO filter todos by authenticated user
     result = await db.execute(select(Todo))
