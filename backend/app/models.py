@@ -1,6 +1,12 @@
-from sqlalchemy import ForeignKey, String
+# standard lib
+
+# 3rd party
+from sqlalchemy import ForeignKey, String, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from database import Base
+
+# local
+from app.database import Base
+from app.enums import Priority
 
 class User(Base):
     __tablename__ = "users"
@@ -25,6 +31,7 @@ class Todo(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(nullable=False)
+    priority: Mapped[Priority] = mapped_column(Enum(Priority, name="priority_enum"))
     completed: Mapped[bool] = mapped_column(default=False)
     owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 

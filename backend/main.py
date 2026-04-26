@@ -1,12 +1,16 @@
+# standard lib
+
+# 3rd party
 from fastapi import FastAPI, HTTPException
 from contextlib import asynccontextmanager
 from sqlalchemy import select
 
-from database import engine, Base
-from dependencies import DBSession
-from schemas import TodoCreate, UserCreate, Token
-from models import Todo, User
-from auth import hash_pw, verify_pw
+# local
+from app.database import engine, Base
+from app.dependencies import DBSession
+from app.schemas import TodoCreate, TodoOut, UserCreate, Token
+from app.models import Todo, User
+from app.auth import hash_pw, verify_pw
 
 
 @asynccontextmanager
@@ -27,7 +31,7 @@ async def dummy():
 async def register(
     user: UserCreate,
     db: DBSession
-):
+) -> dict :
     new_user = User(
         username=user.username,
         password=hash_pw(user.password)
@@ -42,7 +46,7 @@ async def register(
 async def login(
     user: UserCreate,
     db: DBSession
-):
+) -> Token:
     result = await db.execute(
         select(User).where(User.username == user.username)
     )
@@ -52,25 +56,30 @@ async def login(
     
     # Placeholder token generation, replace with actual JWT generation
     token = "fake-jwt-token-for-" + db_user.username
-    return {"access_token": Token(access_token=token)}
+    return Token(access_token=token)
 
 @app.post("/todos")
 async def create_todo(
     todo: TodoCreate,
     db: DBSession
-):
+) -> TodoOut:
     #TODO associate the todo with the authenticated user
-    new_todo = Todo(title=todo.title)
+    new_todo = Todo(
+        title=todo.title,
+        priority=todo.priority,
+        completed=todo.completed,
+        owner_id=todo.user_id
+    )
     db.add(new_todo)
     await db.commit()
     await db.refresh(new_todo)
-    return {"todo": new_todo}
+    return new_todo
 
 @app.get("/todos")
 async def list_todos(
     db: DBSession
-):
+) -> list[TodoOut]:
     #TODO filter todos by authenticated user
     result = await db.execute(select(Todo))
     todos = result.scalars().all()
-    return {"todos": todos}
+    return todos
