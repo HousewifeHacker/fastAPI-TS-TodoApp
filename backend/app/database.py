@@ -5,10 +5,12 @@ from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-#load_dotenv(dotenv_path="./backend/.env.backend")
+# Docker: app runs from /app, .env.backend is in the same directory
+# Local: app runs from backend/, need to go up one level
+env_path = ".env.backend" if os.path.exists(".env.backend") else "../.env.backend"
+load_dotenv(dotenv_path=env_path)
 
-#DATABASE_URL = os.getenv("DATABASE_URL")
-DATABASE_URL = "postgresql+asyncpg://postgres:password@localhost:5432/tododb"
+DATABASE_URL = os.getenv("DATABASE_URL")
 engine = create_async_engine(DATABASE_URL)
 
 SessionLocal = sessionmaker(

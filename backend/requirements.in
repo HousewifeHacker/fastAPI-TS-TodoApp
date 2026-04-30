@@ -11,6 +11,9 @@ uvicorn
 dotenv
 asyncpg
 
+# python version < 3.11
+backports.asyncio.runner==1.2.0; python_version < '3.11'
+
 # testing
 pytest
 pytest-asyncio

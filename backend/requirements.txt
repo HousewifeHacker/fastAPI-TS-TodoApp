@@ -18,8 +18,10 @@ async-timeout==5.0.1
     # via asyncpg
 asyncpg==0.31.0
     # via -r requirements.in
-backports-asyncio-runner==1.2.0
-    # via pytest-asyncio
+backports-asyncio-runner==1.2.0 ; python_version < "3.11"
+    # via
+    #   -r requirements.in
+    #   pytest-asyncio
 certifi==2026.2.25
     # via
     #   httpcore
