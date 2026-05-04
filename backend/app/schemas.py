@@ -6,12 +6,14 @@ from pydantic import BaseModel, Field
 # local
 from app.enums import Priority
 
+
 class UserCreate(BaseModel):
     username: str = Field(min_length=3, max_length=50)
     password: str = Field(min_length=6, max_length=128)
 
 class Token(BaseModel):
     access_token: str
+    type: str = "bearer"
 
 class TodoCreate(BaseModel):
     title: str

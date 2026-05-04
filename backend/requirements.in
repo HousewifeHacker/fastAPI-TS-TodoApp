@@ -2,17 +2,25 @@
 # requirement.in Intentionally dependent, excludes their dependencies
 # Use `pip-compile` to generate `requirements.txt` with all dependencies.
 
+# web framework
 fastapi
-sqlalchemy
-libpass
-alembic
-psycopg2-binary
 uvicorn
-dotenv
 asyncpg
-
+# forms
+python-multipart
 # python version < 3.11
 backports.asyncio.runner==1.2.0; python_version < '3.11'
+
+# db
+sqlalchemy
+psycopg2-binary
+alembic
+
+# security
+libpass
+bcrypt
+pyjwt
+dotenv
 
 # testing
 pytest
