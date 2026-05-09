@@ -1,6 +1,7 @@
 import os
 import dotenv
 from datetime import datetime, timedelta, timezone
+from typing import Optional
 
 import jwt
 from passlib.context import CryptContext
@@ -22,7 +23,7 @@ def verify_pw(password: str, hashed_password: str) -> bool:
     # Placeholder for password verification function
     return pwd_context.verify(password, hashed_password)
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     # Placeholder for JWT token creation
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
